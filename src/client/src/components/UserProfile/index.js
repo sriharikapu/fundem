@@ -3,6 +3,7 @@ import CreatePostForm from '../CreatePostForm/index.js';
 import styles from './UserProfile.module.scss';
 
 export default class UserProfile extends Component {
+  createPostModal = undefined;
   state = {
     isReady: false,
     isSubscriptionValid: false,
@@ -30,8 +31,12 @@ export default class UserProfile extends Component {
   };
   
   onClickCreatePost = (event) => {
-    event.preventDefault();
-    this.setState({ postModalVisible: true });
+    if (event) event.preventDefault();
+    this.setState({ postModalVisible: !this.state.postModalVisible }, () => {
+      if (this.state.postModalVisible) {
+        this.createPostModal.focusInput();
+      }
+    });
     return false;
   };
 
@@ -47,26 +52,38 @@ export default class UserProfile extends Component {
 
   render()  {
     const { user, posts } = this.props;
-    const { address, title, description } = user;
+    const { title, description } = user;
     const { isReady, isSubscriptionValid, postModalVisible, subModalVisible } = this.state;
 
     return (
       <div className={styles.profile}>
-        {postModalVisible && <CreatePostForm user={user} createPost={this.props.createPost} />}
+        {postModalVisible && <CreatePostForm
+          user={user}
+          createPost={this.props.createPost}
+          onCloseModal={this.onClickCreatePost}
+          ref={(modal) => this.createPostModal = modal} />}
         {subModalVisible && <div></div>}
         {isReady && <div>
           {!isSubscriptionValid && <a href="/subscribe" onClick={this.onClickSubscribe}>Subscribe</a>}
-          <a href="/createPost" onClick={this.onClickCreatePost}>Create Post</a>
-          <h1>{ title }</h1>
-          <h2>{ address }</h2>
-          <h3>{ description }</h3>
-          {posts && posts.map((post, index) => (
-            <div className={styles.post} key={`post-${ index }`}>
-              <h1>{ post[0] }</h1>
-              <p>{ post[1] }</p>
-              <p>{ post[2] }</p>
+          <div className={styles.profileContent}>
+            <div className={styles.overview}>
+              <h1>{ title }</h1>
+              <p>{ description }</p>
+              <a href="/createPost" onClick={this.onClickCreatePost}>Create Post</a>
             </div>
-          ))}
+            <ol className={styles.posts}>
+              {posts && posts.map((post, index) => (
+                <li className={styles.post} key={`post-${ index }`}>
+                  <img src={post[2]} alt="" />
+                  <div>
+                    <p className={styles.postDate}>February 16, 2019</p>
+                    <h1>{ post[0] }</h1>
+                    <p className={styles.postBody}>{ post[1] }</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>}
       </div>
     );

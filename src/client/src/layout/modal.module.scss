@@ -1,0 +1,39 @@
+@import './variables.scss';
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .modalContent {
+    height: 60vh;
+    width: 60vw;
+    transform: translateY(-96px);
+    background: $white;
+    border: 2px solid $black;
+    box-shadow: -12px 12px 0 0 $black;
+    text-align: left;
+    padding: 36px;
+
+    h1 {
+      margin: 0 0 16px;
+    }
+
+    .modalClose {
+      position: absolute;
+      top: 26px;
+      right: 28px;
+      font-weight: bold;
+      font-size: 2em;
+      border: 0;
+      background: none;
+    }
+  }
+}

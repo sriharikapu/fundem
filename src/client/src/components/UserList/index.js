@@ -9,8 +9,8 @@ export default class UserList extends Component {
     return (
       <ul className={styles.usersList}>
         {userAddresses.map((address, index) => (
-          <li className={styles.usersListItem} key={`user-${index}`}>
-            <a href={`/user/${address}`} onClick={(event) => this.props.setRoute(`/user/${address}`, event)} className={styles.userListItemLink}>
+          <li key={`user-${index}`}>
+            <a href={`/user/${address}`} onClick={(event) => this.props.setRoute(`/user/${address}`, event)}>
               <h1>{users[address].title}</h1>
               <p>{users[address].description}</p>
             </a>

@@ -1,45 +1,100 @@
 @import '../../layout/variables.scss';
 
-.counter {
-  padding: 40px 0;
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 380px;
-  height: auto;
-  padding: 40px 20px;
-  border: 1px solid #ccc;
-  box-shadow: 0px 2px 2px #ccc;
+.profile {
+  .profileContent {
+    width: $width-desktop;
 
-  h3 {
-    border-bottom: 1px dotted #FFBE44;
-    padding-bottom: 5px;
-  }
+    .overview {
+      position: relative;
+      display: block;
+      background: $grey;
+      margin: 16px 0 0;
+      padding: 24px;
+      text-align: left;
 
-  .dataPoint {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: flex-start;
-    margin: 5px 0;
-    width: 100%;
+      h1 {
+        margin: 0;
+      }
 
-    .value {
-      font-weight: bold;
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: space-between;
-      align-items: baseline;
+      p {
+        margin-bottom: 0;
+        font-style: italic;
+        width: 60%;
+      }
+
+      a {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        padding: 8px 12px;
+        background: $secondary;
+        color: $grey;
+        text-decoration: none;
+        box-shadow: -8px 8px 0px 0px $black;
+        transition: all ease 60ms;
+
+        &:after {
+          content: "+";
+          margin-left: 8px;
+        }
+
+        &:hover {
+          background: darken($secondary, 20%);
+        }
+
+        &:active {
+          transform: translate(-6px, 6px);
+          box-shadow: 0px 0px 0px 0px $black;
+        }
+        
+        &:focus,
+        &:active {
+          outline: none;
+        }
+      }
+    }
+
+    ol.posts {
+      list-style: none;
+      margin: 36px 0;
+      padding: 0;
+      text-align: left;
+
+      li {
+        display: block;
+
+        & + li {
+          margin-top: 72px;
+        }
+
+        div {
+          width: 80%;
+          margin-left: 10%;
+
+          h1 {
+            margin: 16px 0 0;
+          }
+
+          .postDate {
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid $black;
+          }
+
+          .postBody {
+            display: block;
+            max-width: 700px;
+          }
+        }
+
+        img {
+          background: $black;
+          width: 100%;
+          height: auto;
+        }
+      }
     }
   }
 
-  .buttons {
-    display: flex;
-    width: 100%;
-    flex-flow: column nowrap;
-    align-items: center;
-    button {
-      margin: 5px 0;
-    }
-  }
 }
