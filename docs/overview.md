@@ -1,64 +1,53 @@
-# patreon
+# fundem overview
 ## Contracts
-### `Patreon.sol`
+### `Fundem.sol`
 #### Requirements
-* `var creators[]`
-* `function newConsumer (title, msg.sender)`
-* `function newCreator (title, description, msg.sender)`
-* `function getCreators ()`
-### `Consumer.sol`
-#### Requirements
-* `var owner`
-* `string title`
-* `var creators[]`
-* `mapping creator address > struct (amount + timestamp exp.)`
-* `function getSubscriptionExpiration (creator address)`
-* `function createSubscription (creator address, amount)`
-#### Additional Features
-* `string avatar` (IPFS CID)
-* `string description`
-* `function getSubscriptions ()`
-* `function modifySubscription (creator address, amount = 0)`
-> renewing and changing amount, or cancelling
-### `Creator.sol`
+* `var users[]`
+* `function createUser (title, description, msg.sender)`
+* `function getUsers ()`
+### `User.sol`
 #### Requirements
 * `var owner`
+* `string title` (Account name)
+* `string description` (Brief account description/introduction)
+* `var subscribers[]` (User addresses)
+* `var subscriptions[]` (User addresses)
 * `var posts[]` (IPFS CIDs)
-* `string title`
-* `string description`
-* `function post (title, description, cid)`
-* `function withdraw (amount, msg.sender)`
-* `function getPosts (timestamp, msg.sender)`
-#### `function pay ()`
-* transfer money from consumer to creator
-* add msg.sender to consumers array
-* map expiration timestamp to sender address
-* `consumerToExpiration[msg.sender] = timestamp` 
+* `mapping subscriptionsToExpiration` (address > expiration timestamp)
+* `function getSubscriptionExpiration (creator address)`
+* `function createSubscriber (creator address, amount)`
+* `function getPosts ()`
+* `function createPost (title, description, ipfsCid)`
+* `function widthdraw (amount, msg.sender)`
+#### `function createSubscription ()`
+* transfer money from subscriber to creator
+* add creator address to subscriptions array
+* map expiration timestamp to creator address
+* `subscriptionsToExpiration[address creator] = timestamp` 
 #### `function getPosts (timestamp, msg.sender)`
 * `expiration = consumerToExpiration[msg.sender]`
 * compare `expiration` value from mapping to param `timestamp` (date now)
 * return posts if `expiration > timestamp`
 #### Additional Features
-* `var avatar` (IPFS CID)
+* `string avatar` (IPFS CID)
+* `function getSubscriptions ()`
+* `function modifySubscription (creator address, amount = 0)`
 ## Client
-### `NewConsumer.js`
-* call `newConsumer` with `title`
-* redirect to `Creators.js` on complete
-### `NewCreator.js`
-* call `newCreator` with `title`, `description`
-* redirect to `Creator.js` on complete
-### `Creators.js`
-* call `getCreators`
-* display list of creators
-* redirect to `Creator.js` on click creator
-### `Creator.js`
-* call `getPosts`
-* if address is owner; show post button
-* if posts; display them
-* else; display subscribe button
-* handle subscription interaction
-### `Post.js`
-* form
-* handle ipfs upload
-* call `newPost` with `title`, `description`, `cid`
-* redirect to `Creator.js` on complete
+### `CreateUser.js`
+* call `createUser(title, description, msg.sender)`
+* redirect to `Users.js` on complete
+### `Users.js`
+* call `getUsers()`
+* call `getSubscriptions()`, store locally
+* when user clicks on another user, redirect to `User.js`
+### `User.js`
+* call `getSubscriptionExpiration(address creator)`
+* if subscription is still valid, call `getPosts()`, display posts chronologically
+* fetch individual post data from IPFS
+* if subscription is invalid or no subscription, show UI to subscribe
+* on subscribe click, call `createSubscriber (address creator, amount)`
+### `CreatePost.js`
+* form UI: title, description, file upload
+* upload to IPFS, get CID/hash of file
+* call `createPost(title, description, ipfsCid)`
+* redirect to `User.js` on completes
