@@ -6,6 +6,9 @@ contract Fundem is Initializable {
     address[] public users;
     mapping(address => address) public userToContract;
 
+    // Logs when a user has been created
+    event LogUserCreated(address indexed owner, address indexed userAddress);
+
     function initialize () initializer public {
         owner = msg.sender;
     }
@@ -13,6 +16,7 @@ contract Fundem is Initializable {
     function createUser (address _userAddress) public {
         userToContract[msg.sender] = _userAddress;
         users.push(_userAddress);
+        emit LogUserCreated(msg.sender,_userAddress);
     }
 
     function getUserCount () public view returns (uint) {
