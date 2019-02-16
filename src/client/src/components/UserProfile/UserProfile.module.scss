@@ -14,29 +14,36 @@
 
       h1 {
         margin: 0;
+        max-width: 80%;
+        line-height: 1.25em;
       }
 
       p {
         margin-bottom: 0;
         font-style: italic;
-        width: 60%;
+        width: 75%;
       }
 
-      a {
+      a,
+      span {
         position: absolute;
         top: 24px;
         right: 24px;
         padding: 8px 12px;
+      }
+
+      span {
+        background: $white;
+        color: $black;
+      }
+
+      a {
+        position: absolute;
         background: $secondary;
         color: $grey;
         text-decoration: none;
         box-shadow: -8px 8px 0px 0px $black;
         transition: all ease 60ms;
-
-        &:after {
-          content: "+";
-          margin-left: 8px;
-        }
 
         &:hover {
           background: darken($secondary, 20%);
@@ -73,6 +80,7 @@
 
           h1 {
             margin: 16px 0 0;
+            line-height: 1.25em;
           }
 
           .postDate {

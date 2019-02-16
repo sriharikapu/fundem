@@ -143,27 +143,9 @@ class App extends Component {
   };
 
   createUser = async (title, description) => {
-    const { accounts, contract, web3 } = this.state;
-    let User = {};
-    let userInstance = null;
-    let estimatedGas = null;
-    let currentGasPrice = null;
-    let deployedUserInstance = null;
-
+    const { accounts, contract } = this.state;
     try {
-      User = require("./contracts/User.json");
-      userInstance = new web3.eth.Contract(User.abi);
-      estimatedGas = await web3.eth.estimateGas({ data: User.bytecode });
-      currentGasPrice = await web3.eth.getGasPrice();
-      deployedUserInstance = await userInstance.deploy({
-        data: User.bytecode
-      }).send({
-        from: accounts[0],
-        gas: estimatedGas,
-        gasPrice: currentGasPrice
-      });
-      await deployedUserInstance.methods.initialize(title, description).send({ from: accounts[0] });
-      await contract.methods.createUser(deployedUserInstance._address).send({ from: accounts[0] });
+      await contract.methods.createUser(title, description).send({ from: accounts[0] });
     } catch (e) {
       console.log(e);
     }
@@ -207,6 +189,23 @@ class App extends Component {
     }
   };
 
+  getOwnerStatus = async (address) => {
+    const { accounts, web3 } = this.state;
+    let User = {};
+    let contractInstance = null;
+    let isOwner = false;
+
+    try {
+      User = require("./contracts/User.json");
+      contractInstance = new web3.eth.Contract(User.abi, address);
+      isOwner = await contractInstance.methods.isOwner().call({ from: accounts[0] });
+    } catch (e) {
+      console.log(e);
+    }
+    
+    return isOwner;
+  };
+
   getSubscriptionStatus = async (address) => {
     const { contract, accounts, web3 } = this.state;
     let User = {};
@@ -221,7 +220,7 @@ class App extends Component {
       userInstance = new web3.eth.Contract(User.abi, userContractAddress);
       subscriptionExpiration = await userInstance.methods.getSubscriptionExpiration(address).call({ from: accounts[0] });
       if (subscriptionExpiration) {
-        isSubscriptionValid = new Date().getTime() < subscriptionExpiration;
+        isSubscriptionValid = new Date().getTime() / 1000 < subscriptionExpiration;
       }
     } catch (e) {
       console.log(e);
@@ -240,7 +239,10 @@ class App extends Component {
       User = require("./contracts/User.json");
       userContractAddress = await contract.methods.getUserContractAddress().call({ from: accounts[0] });
       userInstance = new web3.eth.Contract(User.abi, userContractAddress);
-      await userInstance.methods.createSubscription(address).send({ from: accounts[0] });
+      await userInstance.methods.createSubscription(address).send({
+        from: accounts[0],
+        value: web3.utils.toWei("0.2", "ether")
+      });
     } catch (e) {
       console.log(e);
     }
@@ -317,6 +319,7 @@ class App extends Component {
           createSubscription={this.createSubscription}
           getPosts={this.getPosts}
           getSubscriptionStatus={this.getSubscriptionStatus}
+          getOwnerStatus={this.getOwnerStatus}
           setRoute={this.setRoute}
           user={users[userAddress]}
           posts={posts}

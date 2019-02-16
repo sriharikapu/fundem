@@ -10,7 +10,7 @@
 
   li {
     flex-shrink: 0;
-    height: 145px;
+    height: 250px;
     width: calc(50% - 8px);
     margin-bottom: 16px;
     text-align: left;
@@ -34,6 +34,7 @@
 
       h1 {
         margin: 0;
+        line-height: 1.25em;
       }
 
       p {
@@ -44,6 +45,7 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         box-orient: vertical;
+        line-height: 1.25em;
       }
     }
   }

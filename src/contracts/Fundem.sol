@@ -1,5 +1,6 @@
 pragma solidity ^0.5.0;
 import "zos-lib/contracts/Initializable.sol";
+import "./User.sol";
 
 contract Fundem is Initializable {
     address private owner;
@@ -13,10 +14,11 @@ contract Fundem is Initializable {
         owner = msg.sender;
     }
 
-    function createUser (address _userAddress) public {
-        userToContract[msg.sender] = _userAddress;
-        users.push(_userAddress);
-        emit LogUserCreated(msg.sender,_userAddress);
+    function createUser (string memory _title, string memory _description) public {
+        User newUserContract = new User(msg.sender, _title, _description);
+        userToContract[msg.sender] = address(newUserContract);
+        users.push(address(newUserContract));
+        emit LogUserCreated(msg.sender,address(newUserContract));
     }
 
     function getUserCount () public view returns (uint) {

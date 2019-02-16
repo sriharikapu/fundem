@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
-import "zos-lib/contracts/Initializable.sol";
 
-contract User is Initializable {
+contract User {
     struct Post {
         string title;
         string description;
@@ -39,8 +38,8 @@ contract User is Initializable {
     /// @dev initialize the User's contract ownership and information
     /// @param _title The name or title of the user
     /// @param _description short description of the user
-    function initialize (string memory _title, string memory _description) initializer public {
-        owner = msg.sender;
+    constructor (address payable _owner, string memory _title, string memory _description) public {
+        owner = _owner;
         title = _title;
         description = _description;
     }
@@ -144,4 +143,11 @@ contract User is Initializable {
     function getInfo () public view returns (string memory, string memory) {
         return (title, description);
     }
+
+    /// @dev check if sender is owner of contract
+    function isOwner () public view returns (bool) {
+        return msg.sender == owner;
+    }
+
+    function() external payable { }
 }

@@ -7,21 +7,30 @@ export default class UserProfile extends Component {
   state = {
     isReady: false,
     isSubscriptionValid: false,
+    isOwner: false,
     postModalVisible: false,
     subModalVisible: false
   };
 
   async componentDidMount () {
+    await this.checkOwnership();
+    await this.props.getOwnerStatus(this.props.user.address);
     await this.checkSubscription();
   }
+
+  checkOwnership = async () => {
+    const { user } = this.props;
+    const { address } = user;
+    const isOwner = await this.props.getOwnerStatus(address);
+    this.setState({ isOwner });
+  };
 
   checkSubscription = async () => {
     const { user } = this.props;
     const { address } = user;
     const isSubscriptionValid = await this.props.getSubscriptionStatus(address);
-    // this.setState({ isSubscriptionValid });
-    this.setState({ isSubscriptionValid: true }, async () => {
-      if (this.state.isSubscriptionValid) {
+    this.setState({ isSubscriptionValid }, async () => {
+      if (this.state.isOwner || this.state.isSubscriptionValid) {
         await this.props.getPosts(address);
         this.setState({ isReady: true });
       } else {
@@ -53,7 +62,7 @@ export default class UserProfile extends Component {
   render()  {
     const { user, posts } = this.props;
     const { title, description } = user;
-    const { isReady, isSubscriptionValid, postModalVisible, subModalVisible } = this.state;
+    const { isReady, isSubscriptionValid, isOwner, postModalVisible, subModalVisible } = this.state;
 
     return (
       <div className={styles.profile}>
@@ -64,15 +73,16 @@ export default class UserProfile extends Component {
           ref={(modal) => this.createPostModal = modal} />}
         {subModalVisible && <div></div>}
         {isReady && <div>
-          {!isSubscriptionValid && <a href="/subscribe" onClick={this.onClickSubscribe}>Subscribe</a>}
           <div className={styles.profileContent}>
             <div className={styles.overview}>
               <h1>{ title }</h1>
               <p>{ description }</p>
-              <a href="/createPost" onClick={this.onClickCreatePost}>Create Post</a>
+              {isOwner && <a href="/createPost" onClick={this.onClickCreatePost}>Create Post</a>}
+              {!isOwner && !isSubscriptionValid && <a href="/subscribe" onClick={this.onClickSubscribe}>Subscribe</a>}
+              {!isOwner && isSubscriptionValid && <span>Subscribed!</span>}
             </div>
             <ol className={styles.posts}>
-              {posts && posts.map((post, index) => (
+              {(isOwner || isSubscriptionValid) && posts && posts.map((post, index) => (
                 <li className={styles.post} key={`post-${ index }`}>
                   <img src={post[2]} alt="" />
                   <div>
