@@ -1,22 +1,14 @@
 import React, { Component } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
 import Header from "./components/Header/index.js";
-import Footer from "./components/Footer/index.js";
 import Instructions from "./components/Instructions/index.js";
 import CreateUserForm from "./components/CreateUserForm/index.js";
 import UserList from "./components/UserList/index.js";
 import UserProfile from "./components/UserProfile/index.js";
-import { Loader } from 'rimble-ui';
 import styles from './App.module.scss';
 
 class App extends Component {
-  footer = null;
   state = {
-    currentTx: {
-      isSuccess: false,
-      isWorking: false,
-      description: ""
-    },
     storageValue: 0,
     node: null,
     web3: null,
@@ -39,7 +31,6 @@ class App extends Component {
 
   componentDidMount = async () => {
     let Fundem = {};
-    this.setCurrentTx("Establishing network connection");
     try {
       Fundem = require("./contracts/Fundem.json");
     } catch (e) {
@@ -90,13 +81,11 @@ class App extends Component {
       else {
         this.setState({ web3, ganacheAccounts, accounts, balance, networkId, isMetaMask });
       }
-      this.setCurrentTxSuccess("Network connection established");
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
       );
-      this.setCurrentTxFailure("Could not establish network connection");
       console.error(error);
     }
     try {
@@ -116,26 +105,20 @@ class App extends Component {
     }
   }
 
+  getUserInstance = (address) => {
+    try {
+      const User = require("./contracts/User.json");
+      return new this.state.web3.eth.Contract(User.abi, address, { from: this.state.accounts[0] });
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
   refreshValues = async (instance) => {
     if (instance) {
       await this.getUsers();
     }
   }
-
-  setCurrentTx = (description) => {
-    this.setState({ currentTx: { description, isComplete: false, isWorking: true, isSuccess: false } });
-    this.footer.showTxProcessing();
-  };
-
-  setCurrentTxSuccess = (description) => {
-    this.setState({ currentTx: { description, isComplete: true, isWorking: false, isSuccess: true } });
-    this.footer.showTxResult();
-  };
-
-  setCurrentTxFailure = (description) => {
-    this.setState({ currentTx: { description, isComplete: true, isWorking: false, isSuccess: false } });
-    this.footer.showTxResult();
-  };
 
   getUsers = async () => {
     const { accounts, contract } = this.state;
@@ -160,14 +143,12 @@ class App extends Component {
   };
 
   getUser = async (address) => {
-    const { accounts, web3 } = this.state;
-    let User = {};
+    const { accounts } = this.state;
     let userInstance = null;
     let info = {};
 
     try {
-      User = require("./contracts/User.json");
-      userInstance = new web3.eth.Contract(User.abi, address, { from: accounts[0] });
+      userInstance = this.getUserInstance(address);
       info = await userInstance.methods.getInfo().call({ from: accounts[0] });
       return { address, title: info[0], description: info[1] };
     } catch (e) {
@@ -177,50 +158,40 @@ class App extends Component {
 
   createUser = async (title, description) => {
     const { accounts, contract } = this.state;
-    this.setCurrentTx("Creating user account");
     try {
       await contract.methods.createUser(title, description).send({ from: accounts[0], gas: 2000000 });
-      this.setCurrentTxSuccess("User account created successfully");
       this.refreshValues();
       this.setRoute("");
     } catch (e) {
       console.log(e);
-      this.setCurrentTxFailure("Error creating user account");
     }
   };
 
   createPost = async (address, title, description, file, fileName) => {
-    const { accounts, ipfs, web3 } = this.state;
-    let User = {};
+    const { accounts, ipfs } = this.state;
     let userInstance = null;
     let ipfsEntry = null;
     let hash = null;
-    this.setCurrentTx("Publishing post");
 
     try {
       ipfsEntry = await ipfs.node.add(file);
       hash = ipfsEntry[0].hash;
-      User = require("./contracts/User.json");
-      userInstance = new web3.eth.Contract(User.abi, address);
+      userInstance = this.getUserInstance(address);
       await userInstance.methods.createPost(title, description, hash).send({ from: accounts[0] });
-      this.setCurrentTxSuccess("Post published successfully");
     } catch (e) {
       console.log(e);
-      this.setCurrentTxFailure("Error publishing post");
     }
   };
 
   getPosts = async (address) => {
-    const { accounts, web3 } = this.state;
-    let User = {};
+    const { accounts } = this.state;
     let userInstance = null;
     let post = null;
     let posts = [];
     let postCount = null;
 
     try {
-      User = require("./contracts/User.json");
-      userInstance = new web3.eth.Contract(User.abi, address);
+      userInstance = this.getUserInstance(address);
       postCount = await userInstance.methods.getPostCount().call({ from: accounts[0] });
     } catch (e) {
       console.log(e);
@@ -235,15 +206,13 @@ class App extends Component {
   };
 
   getOwnerStatus = async (address) => {
-    const { accounts, web3 } = this.state;
-    let User = {};
-    let contractInstance = null;
+    const { accounts } = this.state;
+    let userInstance = null;
     let isOwner = false;
 
     try {
-      User = require("./contracts/User.json");
-      contractInstance = new web3.eth.Contract(User.abi, address);
-      isOwner = await contractInstance.methods.isOwner().call({ from: accounts[0] });
+      userInstance = this.getUserInstance(address);
+      isOwner = await userInstance.methods.isOwner().call({ from: accounts[0] });
     } catch (e) {
       console.log(e);
     }
@@ -252,17 +221,15 @@ class App extends Component {
   };
 
   getSubscriptionStatus = async (address) => {
-    const { contract, accounts, web3 } = this.state;
-    let User = {};
+    const { contract, accounts } = this.state;
     let userContractAddress = null;
     let userInstance = null;
     let subscriptionExpiration = null;
     let isSubscriptionValid = false;
 
     try {
-      User = require("./contracts/User.json");
       userContractAddress = await contract.methods.getUserContractAddress().call({ from: accounts[0] });
-      userInstance = new web3.eth.Contract(User.abi, userContractAddress);
+      userInstance = this.getUserInstance(userContractAddress);
       subscriptionExpiration = await userInstance.methods.getSubscriptionExpiration(address).call({ from: accounts[0] });
       if (subscriptionExpiration) {
         isSubscriptionValid = new Date().getTime() / 1000 < subscriptionExpiration;
@@ -276,29 +243,26 @@ class App extends Component {
 
   createSubscription = async (address) => {
     const { contract, accounts, web3 } = this.state;
-    let User = {};
     let userContractAddress = null;
     let userInstance = null;
-    this.setCurrentTx("Subscribing...");
 
     try {
-      User = require("./contracts/User.json");
       userContractAddress = await contract.methods.getUserContractAddress().call({ from: accounts[0] });
-      userInstance = new web3.eth.Contract(User.abi, userContractAddress);
+      userInstance = this.getUserInstance(userContractAddress);
       await userInstance.methods.createSubscription(address).send({
         from: accounts[0],
         value: web3.utils.toWei("0.2", "ether")
       });
-      this.setCurrentTxSuccess("Subscription confirmed succesfully");
     } catch (e) {
       console.log(e);
-      this.setCurrentTxFailure("Error confirming subscription");
     }
   };
 
   setRoute = (route, event) => {
     if (event) event.preventDefault();
-    window.history.pushState({}, "", route || "/");
+    let historyRoute = route;
+    if (process.env.NODE_ENV === 'production') historyRoute = "/fundem/" + historyRoute;
+    window.history.pushState({}, "", historyRoute || "/");
     this.setState({ route });
     return false;
   };
@@ -306,16 +270,6 @@ class App extends Component {
   handleBrowserNavigation = (event) => {
     this.setState({ route: window.location.pathname });
   };
-
-  renderLoader () {
-    return (
-      <div className={styles.loader}>
-        <Loader size="80px" color="red" />
-        <h3> Loading Web3, accounts, and contract...</h3>
-        <p> Unlock your metamask </p>
-      </div>
-    );
-  }
 
   renderDeployCheck (instructionsKey) {
     return (
@@ -337,7 +291,6 @@ class App extends Component {
   renderUsers () {
     return (
       <div className={styles.wrapper}>
-        {!this.state.web3 && this.renderLoader()}
         {this.state.web3 && !this.state.contract && (this.renderDeployCheck("fundem"))}
         {this.state.web3 && this.state.contract && (
           <UserList
@@ -380,15 +333,12 @@ class App extends Component {
   render () {
     return (
       <div className={styles.App}>
-        <Header setRoute={this.setRoute} />
+        <Header setRoute={this.setRoute} web3Ready={!!this.state.web3} />
           <div class={styles.main}>
-            {this.state.route === `` && this.renderUsers()}
+            {this.state.route === "" && this.renderUsers()}
             {this.state.route === `createUser` && this.renderCreateUser()}
             {this.state.route.indexOf('user/') > -1 && this.renderUser()}
           </div>
-        <Footer
-          currentTx={this.state.currentTx}
-          ref={(footer) => this.footer = footer} />
       </div>
     );
   }

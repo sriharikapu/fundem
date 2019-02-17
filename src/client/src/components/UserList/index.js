@@ -8,7 +8,7 @@ export default class UserList extends Component {
 
     return (
       <ul className={styles.usersList}>
-        {userAddresses.map((address, index) => (
+        {userAddresses.slice(0).reverse().map((address, index) => (
           <li key={`user-${index}`}>
             <a href={`/user/${address}`} onClick={(event) => this.props.setRoute(`user/${address}`, event)}>
               <h1>{users[address].title}</h1>

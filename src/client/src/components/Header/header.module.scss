@@ -24,17 +24,68 @@
     z-index: 3;
 
     .brand {
+      display: block;
+      float: left;
       vertical-align: middle;
-      font-size: 1.5em;
-      font-weight: bolder;
-      letter-spacing: -0.5px;
 
       a {
+        font-size: 1.5em;
+        font-weight: bolder;
+        letter-spacing: -0.5px;
         &,
         &:visited {
           color: $blue;
           text-decoration: none;
         }
+      }
+
+      .loader,
+      .loaderSuccess,
+      .loaderFailure {
+        display: block;
+        float: right;
+        
+        .indicator {
+          position: relative;
+          vertical-align: middle;
+          display: inline-block;
+          height: 36px;
+          width: 36px;
+          border-radius: 18px;
+          margin-left: 12px;
+
+          &:before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            height: 24px;
+            width: 24px;
+            background: $white;
+            border-radius: 4px;
+            animation-name: spin;
+            animation-duration: 2000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out; 
+          }
+        }
+        
+        .description {
+          font-size: 14px;
+          margin-left: 6px;
+        }
+      }
+
+      .loader .indicator {
+        background: $yellow;
+      }
+
+      .loaderSuccess .indicator {
+        background: $green;
+      }
+
+      .loaderFailure .indicator {
+        background: darken($pink, 20%);
       }
     }
 
@@ -68,5 +119,14 @@
         }
       }
     }
+  }
+}
+
+@keyframes spin {
+  from {
+      transform:rotate(0deg);
+  }
+  to {
+      transform:rotate(360deg);
   }
 }
