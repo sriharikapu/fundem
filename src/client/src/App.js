@@ -12,6 +12,8 @@ import styles from './App.module.scss';
 
 
 class App extends Component {
+  baseUrl = "https://fundem.github.io";
+  basePath = "/fundem";
   footer = null;
   state = {
     currentTx: {
@@ -31,8 +33,8 @@ class App extends Component {
 
   constructor (props) {
     super(props);
-    if (window.location.pathname.length > 1) {
-      window.location.pathname = "/";
+    if (window.location.pathname.length > this.basePath.length + 1) {
+      window.location.pathname = this.basePath;
     }
   }
 
@@ -191,7 +193,7 @@ class App extends Component {
       await contract.methods.createUser(title, description).send({ from: accounts[0], gas: 2000000 });
       this.setCurrentTxSuccess("User account created successfully");
       this.refreshValues();
-      this.setRoute(`/`);
+      this.setRoute("/");
     } catch (e) {
       console.log(e);
       this.setCurrentTxFailure("Error creating user account");
@@ -307,7 +309,7 @@ class App extends Component {
 
   setRoute = (route, event) => {
     if (event) event.preventDefault();
-    window.history.pushState({}, "", `http://localhost:3000${route}`);
+    window.history.pushState({}, "", `${this.baseUrl}${this.basePath}${route}`);
     this.setState({ route });
     return false;
   };
@@ -390,8 +392,8 @@ class App extends Component {
     return (
       <div className={styles.App}>
         <Header setRoute={this.setRoute} />
-          {this.state.route === '/' && this.renderUsers()}
-          {this.state.route === '/createUser' && this.renderCreateUser()}
+          {this.state.route === `${ this.baseUrl }${ this.basePath }` && this.renderUsers()}
+          {this.state.route === `${ this.baseUrl }${ this.basePath }/createUser` && this.renderCreateUser()}
           {this.state.route.indexOf('/user/') > -1 && this.renderUser()}
         <Footer
           currentTx={this.state.currentTx}
