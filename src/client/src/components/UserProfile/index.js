@@ -30,7 +30,7 @@ export default class UserProfile extends Component {
     const { user } = this.props;
     const { address } = user;
     const isSubscriptionValid = await this.props.getSubscriptionStatus(address);
-    this.setState({ isSubscriptionValid }, async () => {
+    this.setState({ isSubscriptionValid, isReady: false }, async () => {
       if (this.state.isOwner || this.state.isSubscriptionValid) {
         await this.props.getPosts(address);
         this.setState({ isReady: true });
@@ -71,7 +71,7 @@ export default class UserProfile extends Component {
         {postModalVisible && <CreatePostForm
           user={user}
           createPost={this.props.createPost}
-          getPosts={this.props.getPosts}
+          checkSubscription={this.checkSubscription}
           onCloseModal={this.onClickCreatePost}
           ref={(modal) => this.createPostModal = modal} />}
         {subModalVisible && <div></div>}
@@ -87,7 +87,7 @@ export default class UserProfile extends Component {
             <ol className={styles.posts}>
               {(isOwner || isSubscriptionValid) && posts && posts.slice(0).reverse().map((post, index) => (
                 <UserPost post={post} ipfs={this.props.ipfs} key={`post-${ index }`} />
-              ))}
+              ))};
             </ol>
           </div>
         </div>}

@@ -103,7 +103,6 @@ class App extends Component {
     try {
       const node = await new window.Ipfs();
       this.setState({ ipfs: { isReady: true, node }});
-      console.log(this.state.ipfs.Buffer);
     } catch (e) {
       console.log(e);
       this.setState({ ipfs: { isReady: false, node: null }});

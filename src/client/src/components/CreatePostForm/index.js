@@ -25,7 +25,6 @@ export default class CreatePostForm extends Component {
     const reader = new FileReader();
     reader.onload = (event) => {
       const buffer = new Buffer.from(event.target.result);
-      console.log(buffer);
       this.setState({
         file: buffer,
         fileName: file.name
@@ -40,8 +39,8 @@ export default class CreatePostForm extends Component {
     // TODO: user feedback
     if (!title || !description || !file) return false;
     await this.props.createPost(this.props.user.address, title, description, file, fileName);
+    await this.props.checkSubscription(this.props.user.address);
     this.props.onCloseModal();
-    this.props.getPosts(this.props.user.address);
     return false;
   };
 

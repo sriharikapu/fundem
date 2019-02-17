@@ -3,7 +3,7 @@ import styles from '../UserProfile/UserProfile.module.scss';
 
 export default class UserPost extends Component {
   state = {
-    imageUrl: null
+    imageUrl: ""
   };
 
   async componentDidMount () {
@@ -11,7 +11,9 @@ export default class UserPost extends Component {
     const urlCreator = window.URL || window.webkitURL;
     const files = await this.props.ipfs.node.get(hash);
     const image = new Blob([files[0].content]);
-    this.setState({ imageUrl: urlCreator.createObjectURL(image) });
+    setTimeout(() => {
+      this.setState({ imageUrl: urlCreator.createObjectURL(image) });
+    }, 1000);
   }
 
   render ()  {
