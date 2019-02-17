@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
 import Header from "./components/Header/index.js";
+import Footer from "./components/Footer/index.js";
 import Instructions from "./components/Instructions/index.js";
 import CreateUserForm from "./components/CreateUserForm/index.js";
 import UserList from "./components/UserList/index.js";
@@ -10,7 +11,13 @@ import { Loader } from 'rimble-ui';
 import styles from './App.module.scss';
 
 class App extends Component {
+  footer = undefined;
   state = {
+    currentTx: {
+      isSuccess: false,
+      isWorking: false,
+      description: ""
+    },
     storageValue: 0,
     web3: null,
     accounts: null,
@@ -32,6 +39,7 @@ class App extends Component {
 
   componentDidMount = async () => {
     let Fundem = {};
+    this.setCurrentTx("Establishing network connection");
     try {
       Fundem = require("./contracts/Fundem.json");
     } catch (e) {
@@ -81,12 +89,14 @@ class App extends Component {
         else {
           this.setState({ web3, ganacheAccounts, accounts, balance, networkId, isMetaMask });
         }
+        this.setCurrentTxSuccess("Network connection established");
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
       );
+      this.setCurrentTxFailure("Could not establish network connection");
       console.error(error);
     }
     window.onpopstate = this.handleBrowserNavigation;
@@ -103,6 +113,21 @@ class App extends Component {
       await this.getUsers();
     }
   }
+
+  setCurrentTx = (description) => {
+    this.setState({ currentTx: { description, isComplete: false, isWorking: true, isSuccess: false } });
+    this.footer.showTxProcessing();
+  };
+
+  setCurrentTxSuccess = (description) => {
+    this.setState({ currentTx: { description, isComplete: true, isWorking: false, isSuccess: true } });
+    this.footer.showTxResult();
+  };
+
+  setCurrentTxFailure = (description) => {
+    this.setState({ currentTx: { description, isComplete: true, isWorking: false, isSuccess: false } });
+    this.footer.showTxResult();
+  };
 
   getUsers = async () => {
     const { accounts, contract } = this.state;
@@ -144,10 +169,15 @@ class App extends Component {
 
   createUser = async (title, description) => {
     const { accounts, contract } = this.state;
+    this.setCurrentTx("Creating user account");
     try {
       await contract.methods.createUser(title, description).send({ from: accounts[0] });
+      this.setCurrentTxSuccess("User account created successfully");
+      this.refreshValues();
+      this.setRoute(`/`);
     } catch (e) {
       console.log(e);
+      this.setCurrentTxFailure("Error creating user account");
     }
   };
 
@@ -155,13 +185,16 @@ class App extends Component {
     const { accounts, web3 } = this.state;
     let User = {};
     let userInstance = null;
+    this.setCurrentTx("Publishing post");
 
     try {
       User = require("./contracts/User.json");
       userInstance = new web3.eth.Contract(User.abi, address);
       await userInstance.methods.createPost(title, description, file).send({ from: accounts[0] });
+      this.setCurrentTxSuccess("Post published successfully");
     } catch (e) {
       console.log(e);
+      this.setCurrentTxFailure("Error publishing post");
     }
   };
 
@@ -234,6 +267,7 @@ class App extends Component {
     let User = {};
     let userContractAddress = null;
     let userInstance = null;
+    this.setCurrentTx("Subscribing...");
 
     try {
       User = require("./contracts/User.json");
@@ -243,13 +277,15 @@ class App extends Component {
         from: accounts[0],
         value: web3.utils.toWei("0.2", "ether")
       });
+      this.setCurrentTxSuccess("Subscription confirmed succesfully");
     } catch (e) {
       console.log(e);
+      this.setCurrentTxFailure("Error confirming subscription");
     }
   };
 
   setRoute = (route, event) => {
-    event.preventDefault();
+    if (event) event.preventDefault();
     window.history.pushState({}, "", `http://localhost:3000${route}`);
     this.setState({ route });
     return false;
@@ -331,11 +367,13 @@ class App extends Component {
   render () {
     return (
       <div className={styles.App}>
-        <Header
-          setRoute={this.setRoute} />
+        <Header setRoute={this.setRoute} />
           {this.state.route === '/' && this.renderUsers()}
           {this.state.route === '/createUser' && this.renderCreateUser()}
           {this.state.route.indexOf('/user/') > -1 && this.renderUser()}
+        <Footer
+          currentTx={this.state.currentTx}
+          ref={(footer) => this.footer = footer} />
       </div>
     );
   }

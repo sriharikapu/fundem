@@ -14,12 +14,11 @@ export default class CreateUserForm extends Component {
   };
 
   onFormSubmit = async (event) => {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const { title, description } = this.state;
     // TODO: user feedback
     if (!title || !description) return false;
     await this.props.createUser(title, description);
-    window.location.href = "/";
     return false;
   };
 

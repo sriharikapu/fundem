@@ -1,0 +1,43 @@
+@import '../../layout/variables.scss';
+
+.isVisible,
+.isHidden {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 54px;
+  line-height: 54px;
+  transition: transform 300ms ease;
+}
+
+.isVisible {
+  transform: translateY(0);
+}
+
+.isHidden {
+  transform: translateY(108px);
+}
+
+.txDormant,
+.txActive,
+.txSuccess,
+.txFailure {
+  transtion: all 300ms ease;
+}
+
+.txDormant {
+  background: $grey;
+}
+
+.txActive {
+  background: yellow;
+}
+
+.txSuccess {
+  background: green;
+}
+
+.txFailure {
+  background: red;
+}

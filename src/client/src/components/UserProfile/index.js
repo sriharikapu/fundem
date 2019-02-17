@@ -69,6 +69,7 @@ export default class UserProfile extends Component {
         {postModalVisible && <CreatePostForm
           user={user}
           createPost={this.props.createPost}
+          getPosts={this.props.getPosts}
           onCloseModal={this.onClickCreatePost}
           ref={(modal) => this.createPostModal = modal} />}
         {subModalVisible && <div></div>}
@@ -82,7 +83,7 @@ export default class UserProfile extends Component {
               {!isOwner && isSubscriptionValid && <span>Subscribed!</span>}
             </div>
             <ol className={styles.posts}>
-              {(isOwner || isSubscriptionValid) && posts && posts.map((post, index) => (
+              {(isOwner || isSubscriptionValid) && posts && posts.slice(0).reverse().map((post, index) => (
                 <li className={styles.post} key={`post-${ index }`}>
                   <img src={post[2]} alt="" />
                   <div>

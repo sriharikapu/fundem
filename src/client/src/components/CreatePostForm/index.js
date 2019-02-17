@@ -38,6 +38,7 @@ export default class CreatePostForm extends Component {
     if (!title || !description || !file) return false;
     await this.props.createPost(this.props.user.address, title, description, "");
     this.props.onCloseModal();
+    this.props.getPosts(this.props.user.address);
     return false;
   };
 
