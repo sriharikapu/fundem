@@ -10,6 +10,7 @@ import { Loader } from 'rimble-ui';
 
 import styles from './App.module.scss';
 
+
 class App extends Component {
   footer = null;
   state = {
@@ -27,6 +28,13 @@ class App extends Component {
     users: {},
     posts: []
   };
+
+  constructor (props) {
+    super(props);
+    if (window.location.pathname.length > 1) {
+      window.location.pathname = "/";
+    }
+  }
 
   getGanacheAddresses = async () => {
     if (!this.ganacheProvider) {
@@ -180,7 +188,7 @@ class App extends Component {
     const { accounts, contract } = this.state;
     this.setCurrentTx("Creating user account");
     try {
-      await contract.methods.createUser(title, description).send({ from: accounts[0] });
+      await contract.methods.createUser(title, description).send({ from: accounts[0], gas: 2000000 });
       this.setCurrentTxSuccess("User account created successfully");
       this.refreshValues();
       this.setRoute(`/`);

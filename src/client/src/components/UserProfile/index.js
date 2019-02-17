@@ -87,7 +87,7 @@ export default class UserProfile extends Component {
             <ol className={styles.posts}>
               {(isOwner || isSubscriptionValid) && posts && posts.slice(0).reverse().map((post, index) => (
                 <UserPost post={post} ipfs={this.props.ipfs} key={`post-${ index }`} />
-              ))};
+              ))}
             </ol>
           </div>
         </div>}
