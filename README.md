@@ -16,16 +16,3 @@
 * (when upgrading) `npx zos update Fundem User --network development`
 ## client instructions
 * `npm start`
-## todo
-### contracts
-* fix `createSubscription ()` -- it errors out, definitely did it wrong
-* test `getSubscriptionExpiration ()` -- it might work -- can't tell without `createSubscription ()`
-* make `User.sol` upgradable if possible
-### ipfs
-* file uploads
-### client
-* hide/show create post based on owner
-* upload to ipfs functionaliy
-* style everything lol
-* DRY `userInstance` stuff and save current user instance in state
-* time permitting; ux bounties
