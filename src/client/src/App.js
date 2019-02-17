@@ -11,7 +11,7 @@ import { Loader } from 'rimble-ui';
 import styles from './App.module.scss';
 
 class App extends Component {
-  footer = undefined;
+  footer = null;
   state = {
     currentTx: {
       isSuccess: false,
@@ -19,6 +19,7 @@ class App extends Component {
       description: ""
     },
     storageValue: 0,
+    node: null,
     web3: null,
     accounts: null,
     contract: null,
@@ -99,10 +100,19 @@ class App extends Component {
       this.setCurrentTxFailure("Could not establish network connection");
       console.error(error);
     }
+    try {
+      const node = await new window.Ipfs();
+      this.setState({ ipfs: { isReady: true, node }});
+      console.log(this.state.ipfs.Buffer);
+    } catch (e) {
+      console.log(e);
+      this.setState({ ipfs: { isReady: false, node: null }});
+    }
     window.onpopstate = this.handleBrowserNavigation;
   };
 
   componentWillUnmount () {
+    this.state.ipfs.node.stop();
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -181,16 +191,20 @@ class App extends Component {
     }
   };
 
-  createPost = async (address, title, description, file) => {
-    const { accounts, web3 } = this.state;
+  createPost = async (address, title, description, file, fileName) => {
+    const { accounts, ipfs, web3 } = this.state;
     let User = {};
     let userInstance = null;
+    let ipfsEntry = null;
+    let hash = null;
     this.setCurrentTx("Publishing post");
 
     try {
+      ipfsEntry = await ipfs.node.add(file);
+      hash = ipfsEntry[0].hash;
       User = require("./contracts/User.json");
       userInstance = new web3.eth.Contract(User.abi, address);
-      await userInstance.methods.createPost(title, description, file).send({ from: accounts[0] });
+      await userInstance.methods.createPost(title, description, hash).send({ from: accounts[0] });
       this.setCurrentTxSuccess("Post published successfully");
     } catch (e) {
       console.log(e);
@@ -359,6 +373,7 @@ class App extends Component {
           setRoute={this.setRoute}
           user={users[userAddress]}
           posts={posts}
+          ipfs={this.state.ipfs}
           web3={this.state.web3} />
       </div>
     )

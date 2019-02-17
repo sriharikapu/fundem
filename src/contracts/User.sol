@@ -4,7 +4,7 @@ contract User {
     struct Post {
         string title;
         string description;
-        string ipfsCid;     // the ipfs generated hash for the post content
+        string ipfsHash;     // the ipfs generated hash for the post content
     }
 
     // address of the creator of the user account
@@ -30,7 +30,7 @@ contract User {
     event LogSubscriptionPayed(address indexed _subscribeToAddress, uint256 indexed amount, uint256 expiration);
 
     // Logs when the user submits a post
-    event LogPostSubmitted(string indexed title, string indexed ipfsCid);
+    event LogPostSubmitted(string indexed title, string indexed ipfsHash);
 
     // Logs when a user has withdrawn their payments
     event LogFundsWithdrawn(address indexed owner, uint256 amount);
@@ -75,8 +75,8 @@ contract User {
     /// @dev Function for a user to create a blog post
     /// @param _title The title of the post
     /// @param _description Description of the post
-    /// @param _ipfsCid The hash of the post content on IPFS
-    function createPost (string memory _title, string memory _description, string memory _ipfsCid) public {
+    /// @param _ipfsHash The hash of the post content on IPFS
+    function createPost (string memory _title, string memory _description, string memory _ipfsHash) public {
         require(
             msg.sender == owner,
             "Unauthorized sender."
@@ -88,9 +88,9 @@ contract User {
         );
 
         // Add the post metadata to the array of posts by this user
-        posts.push(Post(_title, _description, _ipfsCid));
+        posts.push(Post(_title, _description, _ipfsHash));
 
-        emit LogPostSubmitted(_title, _ipfsCid);
+        emit LogPostSubmitted(_title, _ipfsHash);
     }
 
     /// @dev Allows a user to withdraw funds that have been sent to them via subscriptions
@@ -135,7 +135,7 @@ contract User {
     /// @return Strings for the title, description, and IPDS content hash
     function getPost (uint _index) public view returns (string memory, string memory, string memory) {
         Post memory p = posts[_index];
-        return (p.title, p.description, p.ipfsCid);
+        return (p.title, p.description, p.ipfsHash);
     }
 
     /// @dev Get metadata about the user

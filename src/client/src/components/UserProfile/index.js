@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import CreatePostForm from '../CreatePostForm/index.js';
+import UserPost from '../UserPost/index.js';
 import styles from './UserProfile.module.scss';
 
 export default class UserProfile extends Component {
@@ -59,10 +60,11 @@ export default class UserProfile extends Component {
     return false;
   };
 
-  render()  {
+  render ()  {
     const { user, posts } = this.props;
     const { title, description } = user;
     const { isReady, isSubscriptionValid, isOwner, postModalVisible, subModalVisible } = this.state;
+    const urlCreator = window.URL || window.webkitURL;
 
     return (
       <div className={styles.profile}>
@@ -84,14 +86,7 @@ export default class UserProfile extends Component {
             </div>
             <ol className={styles.posts}>
               {(isOwner || isSubscriptionValid) && posts && posts.slice(0).reverse().map((post, index) => (
-                <li className={styles.post} key={`post-${ index }`}>
-                  <img src={post[2]} alt="" />
-                  <div>
-                    <p className={styles.postDate}>February 16, 2019</p>
-                    <h1>{ post[0] }</h1>
-                    <p className={styles.postBody}>{ post[1] }</p>
-                  </div>
-                </li>
+                <UserPost post={post} ipfs={this.props.ipfs} key={`post-${ index }`} />
               ))}
             </ol>
           </div>

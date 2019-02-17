@@ -21,22 +21,25 @@ export default class CreatePostForm extends Component {
   };
 
   onFileInput = (file) => {
+    const Buffer = require("buffer/").Buffer;
     const reader = new FileReader();
     reader.onload = (event) => {
+      const buffer = new Buffer.from(event.target.result);
+      console.log(buffer);
       this.setState({
-        file: event.target.result,
+        file: buffer,
         fileName: file.name
       });
     };
-    reader.readAsDataURL(file);
+    reader.readAsArrayBuffer(file);
   };
 
   onFormSubmit = async (event) => {
     event.preventDefault();
-    const { title, description, file } = this.state;
+    const { title, description, file, fileName } = this.state;
     // TODO: user feedback
     if (!title || !description || !file) return false;
-    await this.props.createPost(this.props.user.address, title, description, "");
+    await this.props.createPost(this.props.user.address, title, description, file, fileName);
     this.props.onCloseModal();
     this.props.getPosts(this.props.user.address);
     return false;
