@@ -268,7 +268,9 @@ class App extends Component {
   };
 
   handleBrowserNavigation = (event) => {
-    this.setState({ route: window.location.pathname });
+    let newRoute = window.location.pathname;
+    if (process.env.NODE_ENV === "production") newRoute = newRoute.replace("/fundem/", "");
+    this.setState({ route: newRoute });
   };
 
   renderDeployCheck (instructionsKey) {
