@@ -12,8 +12,8 @@ import styles from './App.module.scss';
 
 
 class App extends Component {
-  baseUrl = "https://fundem.github.io";
-  basePath = "/fundem";
+  baseUrl = process.env.NODE_ENV === 'development' ? "http://localhost:3000" : "https://fundem.github.io";
+  basePath = process.env.NODE_ENV === 'development' ? "/" : "/fundem/";
   footer = null;
   state = {
     currentTx: {
@@ -392,8 +392,8 @@ class App extends Component {
     return (
       <div className={styles.App}>
         <Header setRoute={this.setRoute} />
-          {this.state.route === `${ this.baseUrl }${ this.basePath }` && this.renderUsers()}
-          {this.state.route === `${ this.baseUrl }${ this.basePath }/createUser` && this.renderCreateUser()}
+          {this.state.route === `${ this.basePath }` && this.renderUsers()}
+          {this.state.route === `${ this.basePath }/createUser` && this.renderCreateUser()}
           {this.state.route.indexOf('/user/') > -1 && this.renderUser()}
         <Footer
           currentTx={this.state.currentTx}
