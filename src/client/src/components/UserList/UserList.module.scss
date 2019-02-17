@@ -21,8 +21,9 @@
 
     a {
       box-sizing: border-box;
-      color: $black;
-      background: $grey;
+      color: $blue;
+      background: $white;
+      border: 1px solid $blue;
       display: block;
       height: 100%;
       padding: 24px;

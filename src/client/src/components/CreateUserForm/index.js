@@ -4,10 +4,15 @@ import formStyles from '../../layout/form.module.scss';
 import buttonStyles from '../../layout/button.module.scss';
 
 export default class CreateUserForm extends Component {
+  firstInput = null;
   state = {
       title: "",
       description: ""
   };
+
+  componentDidMount () {
+    this.firstInput.focus();
+  }
 
   onFieldInput = (field, value) => {
       this.setState({ [field]: value });
@@ -29,7 +34,7 @@ export default class CreateUserForm extends Component {
         <p>Sign up to start supporting your favorite artists and creators.</p>
         <form className={formStyles.form} onSubmit={this.onFormSubmit}>
           <label>Account Name</label>
-          <input name="title" type="text" value={this.state.title} onChange={(event) => this.onFieldInput("title", event.target.value)} />
+          <input ref={(input) => this.firstInput = input} name="title" type="text" value={this.state.title} onChange={(event) => this.onFieldInput("title", event.target.value)} />
           <label>Brief Overview</label>
           <textarea rows="3" name="description" value={this.state.description} onChange={(event) => this.onFieldInput("description", event.target.value)}></textarea>
           <input className={buttonStyles.button} type="submit" value="Create Account" />

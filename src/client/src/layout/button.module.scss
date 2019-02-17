@@ -3,22 +3,23 @@
 .button {
   margin: 36px 0 0;
   padding: 8px 12px;
-  background: $secondary;
+  border: 0;
+  font-size: 1em;
+  background: darken($pink, 20%);
   color: $grey;
   text-decoration: none;
-  border: 0;
-  box-shadow: -8px 8px 0px 0px $black;
+  box-shadow: -8px 8px 0px 0px $blue;
   transition: all ease 60ms;
-  font-size: 1.15em;
 
   &:hover,
   &:focus {
-    background: darken($secondary, 20%);
+    background: darken($pink, 10%);
+    cursor: pointer;
   }
 
   &:active {
-    transform: translate(-6px, 6px);
-    box-shadow: 0px 0px 0px 0px $black;
+    transform: translate(-3px, 3px);
+    box-shadow: -4px 4px 0 0 $blue;
   }
 
   &:focus,

@@ -22,7 +22,7 @@ class App extends Component {
     web3: null,
     accounts: null,
     contract: null,
-    route: `/`,
+    route: "",
     users: {},
     posts: []
   };
@@ -182,7 +182,7 @@ class App extends Component {
       await contract.methods.createUser(title, description).send({ from: accounts[0], gas: 2000000 });
       this.setCurrentTxSuccess("User account created successfully");
       this.refreshValues();
-      this.setRoute("/");
+      this.setRoute("");
     } catch (e) {
       console.log(e);
       this.setCurrentTxFailure("Error creating user account");
@@ -298,8 +298,7 @@ class App extends Component {
 
   setRoute = (route, event) => {
     if (event) event.preventDefault();
-    // window.history.pushState({}, "", `${this.baseUrl}${this.basePath}${route}`);
-    window.history.pushState({}, "", route);
+    window.history.pushState({}, "", route || "/");
     this.setState({ route });
     return false;
   };
@@ -382,9 +381,11 @@ class App extends Component {
     return (
       <div className={styles.App}>
         <Header setRoute={this.setRoute} />
-          {this.state.route === `/` && this.renderUsers()}
-          {this.state.route === `/createUser` && this.renderCreateUser()}
-          {this.state.route.indexOf('/user/') > -1 && this.renderUser()}
+          <div class={styles.main}>
+            {this.state.route === `` && this.renderUsers()}
+            {this.state.route === `createUser` && this.renderCreateUser()}
+            {this.state.route.indexOf('user/') > -1 && this.renderUser()}
+          </div>
         <Footer
           currentTx={this.state.currentTx}
           ref={(footer) => this.footer = footer} />

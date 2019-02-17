@@ -22,7 +22,7 @@
     &:focus,
     &:active {
       outline: none;
-      border-color: $black;
+      border-color: $blue;
     }
   }
 
@@ -60,7 +60,7 @@
     button {
       display: block;
       border: 3px solid darken($grey, 20%);
-      color: $black;
+      color: $blue;
       width: 100%;
       height: 50px;
       padding: 8px 12px;
@@ -82,7 +82,7 @@
 
       &:hover + button,
       &:focus + button {
-        border-color: $black;
+        border-color: $blue;
         outline: none;
       }
     }

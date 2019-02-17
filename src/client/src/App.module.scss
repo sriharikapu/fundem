@@ -1,11 +1,10 @@
 @import './layout/variables.scss';
 
 .App {
-  text-align: center;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  align-items: center;
+  background: $grey;
 }
 .wrapper {
   min-height: 80vh;
@@ -13,4 +12,7 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+}
+.main {
+  margin: 84px 0 0;
 }
