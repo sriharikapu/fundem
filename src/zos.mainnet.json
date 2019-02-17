@@ -1,0 +1,125 @@
+{
+  "contracts": {
+    "Fundem": {
+      "address": "0x9053E233Aa368b0F1C828303f1f3A1474c0E2CBA",
+      "constructorCode": "608060405234801561001057600080fd5b50612831806100206000396000f3fe",
+      "bodyBytecodeHash": "1dc5e1a40d7fecc6f8ca0c6755cc73b7f4a655dca10b64cffe6b31fa2e08dd98",
+      "localBytecodeHash": "fc61a0adc7c4756cbd623695a639e04f05277ec2bb6d935c3f0286dc0888ff4a",
+      "deployedBytecodeHash": "fc61a0adc7c4756cbd623695a639e04f05277ec2bb6d935c3f0286dc0888ff4a",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_array:dyn<t_address>": {
+          "id": "t_array:dyn<t_address>",
+          "valueType": "t_address",
+          "length": "dyn",
+          "kind": "array",
+          "label": "address[]"
+        },
+        "t_mapping<t_address>": {
+          "id": "t_mapping<t_address>",
+          "valueType": "t_address",
+          "label": "mapping(key => address)",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 417,
+          "type": "t_bool",
+          "src": "757:24:2"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 419,
+          "type": "t_bool",
+          "src": "876:25:2"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 468,
+          "type": "t_array:50<t_uint256>",
+          "src": "1891:29:2"
+        },
+        {
+          "contract": "Fundem",
+          "path": "contracts/Fundem.sol",
+          "label": "owner",
+          "astId": 7,
+          "type": "t_address",
+          "src": "131:21:0"
+        },
+        {
+          "contract": "Fundem",
+          "path": "contracts/Fundem.sol",
+          "label": "users",
+          "astId": 10,
+          "type": "t_array:dyn<t_address>",
+          "src": "158:22:0"
+        },
+        {
+          "contract": "Fundem",
+          "path": "contracts/Fundem.sol",
+          "label": "userToContract",
+          "astId": 14,
+          "type": "t_mapping<t_address>",
+          "src": "186:49:0"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "zepkit/Fundem": [
+      {
+        "address": "0x72AC97f4Fd98e0Ee28770AB3172DA63CAaB69690",
+        "version": "0.1.0",
+        "implementation": "0x9053E233Aa368b0F1C828303f1f3A1474c0E2CBA"
+      },
+      {
+        "address": "0x05ECd2760E5D073614421b3B0d9fd81B55e7ed9A",
+        "version": "0.1.0",
+        "implementation": "0x9053E233Aa368b0F1C828303f1f3A1474c0E2CBA"
+      }
+    ]
+  },
+  "zosversion": "2.2",
+  "version": "0.1.0",
+  "proxyAdmin": {
+    "address": "0x1Aa36bA9696bfb2f5eCDe35AFCF09cf3Ae628B5C"
+  }
+}

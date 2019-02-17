@@ -251,7 +251,7 @@ class App extends Component {
       userInstance = this.getUserInstance(userContractAddress);
       await userInstance.methods.createSubscription(address).send({
         from: accounts[0],
-        value: web3.utils.toWei("0.2", "ether")
+        value: web3.utils.toWei("0.1", "ether")
       });
     } catch (e) {
       console.log(e);
