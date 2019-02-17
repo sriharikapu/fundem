@@ -7,13 +7,9 @@ import CreateUserForm from "./components/CreateUserForm/index.js";
 import UserList from "./components/UserList/index.js";
 import UserProfile from "./components/UserProfile/index.js";
 import { Loader } from 'rimble-ui';
-
 import styles from './App.module.scss';
 
-
 class App extends Component {
-  baseUrl = process.env.NODE_ENV === 'development' ? "http://localhost:3000" : "https://fundem.github.io";
-  basePath = process.env.NODE_ENV === 'development' ? "/" : "/fundem/";
   footer = null;
   state = {
     currentTx: {
@@ -26,17 +22,10 @@ class App extends Component {
     web3: null,
     accounts: null,
     contract: null,
-    route: window.location.pathname,
+    route: `/`,
     users: {},
     posts: []
   };
-
-  constructor (props) {
-    super(props);
-    if (window.location.pathname.length > this.basePath.length + 1) {
-      window.location.pathname = this.basePath;
-    }
-  }
 
   getGanacheAddresses = async () => {
     if (!this.ganacheProvider) {
@@ -58,50 +47,50 @@ class App extends Component {
     }
     try {
       const isProd = process.env.NODE_ENV === 'production';
+      const web3 = await getWeb3();
+      let ganacheAccounts = [];
       if (!isProd) {
         // Get network provider and web3 instance.
-        const web3 = await getWeb3();
-        let ganacheAccounts = [];
         try {
           ganacheAccounts = await this.getGanacheAddresses();
         } catch (e) {
           console.log('Ganache is not running');
         }
-        // Use web3 to get the user's accounts.
-        const accounts = await web3.eth.getAccounts();
-        // Get the contract instance.
-        const networkId = await web3.eth.net.getId();
-        const isMetaMask = web3.currentProvider.isMetaMask;
-        let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]): web3.utils.toWei('0');
-        balance = web3.utils.fromWei(balance, 'ether');
-        let instance = null;
-        let deployedNetwork = null;
-
-        if (Fundem.networks) {
-          deployedNetwork = Fundem.networks[networkId.toString()];
-          if (deployedNetwork) {
-            instance = new web3.eth.Contract(
-              Fundem.abi,
-              deployedNetwork && deployedNetwork.address,
-            );
-          }
-        }
-        if (instance) {
-          // Set web3, accounts, and contract to the state, and then proceed with an
-          // example of interacting with the contract's methods.
-          this.setState({ web3, ganacheAccounts, accounts, balance, networkId,
-            isMetaMask, contract: instance }, () => {
-              this.refreshValues(instance);
-              setInterval(() => {
-                this.refreshValues(instance);
-              }, 5000);
-            });
-        }
-        else {
-          this.setState({ web3, ganacheAccounts, accounts, balance, networkId, isMetaMask });
-        }
-        this.setCurrentTxSuccess("Network connection established");
       }
+      // Use web3 to get the user's accounts.
+      const accounts = await web3.eth.getAccounts();
+      // Get the contract instance.
+      const networkId = await web3.eth.net.getId();
+      const isMetaMask = web3.currentProvider.isMetaMask;
+      let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]): web3.utils.toWei('0');
+      balance = web3.utils.fromWei(balance, 'ether');
+      let instance = null;
+      let deployedNetwork = null;
+
+      if (Fundem.networks) {
+        deployedNetwork = Fundem.networks[networkId.toString()];
+        if (deployedNetwork) {
+          instance = new web3.eth.Contract(
+            Fundem.abi,
+            deployedNetwork && deployedNetwork.address,
+          );
+        }
+      }
+      if (instance) {
+        // Set web3, accounts, and contract to the state, and then proceed with an
+        // example of interacting with the contract's methods.
+        this.setState({ web3, ganacheAccounts, accounts, balance, networkId,
+          isMetaMask, contract: instance }, () => {
+            this.refreshValues(instance);
+            setInterval(() => {
+              this.refreshValues(instance);
+            }, 5000);
+          });
+      }
+      else {
+        this.setState({ web3, ganacheAccounts, accounts, balance, networkId, isMetaMask });
+      }
+      this.setCurrentTxSuccess("Network connection established");
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -309,7 +298,8 @@ class App extends Component {
 
   setRoute = (route, event) => {
     if (event) event.preventDefault();
-    window.history.pushState({}, "", `${this.baseUrl}${this.basePath}${route}`);
+    // window.history.pushState({}, "", `${this.baseUrl}${this.basePath}${route}`);
+    window.history.pushState({}, "", route);
     this.setState({ route });
     return false;
   };
@@ -392,8 +382,8 @@ class App extends Component {
     return (
       <div className={styles.App}>
         <Header setRoute={this.setRoute} />
-          {this.state.route === `${ this.basePath }` && this.renderUsers()}
-          {this.state.route === `${ this.basePath }/createUser` && this.renderCreateUser()}
+          {this.state.route === `/` && this.renderUsers()}
+          {this.state.route === `/createUser` && this.renderCreateUser()}
           {this.state.route.indexOf('/user/') > -1 && this.renderUser()}
         <Footer
           currentTx={this.state.currentTx}

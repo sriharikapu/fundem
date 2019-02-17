@@ -64,7 +64,6 @@ export default class UserProfile extends Component {
     const { user, posts } = this.props;
     const { title, description } = user;
     const { isReady, isSubscriptionValid, isOwner, postModalVisible, subModalVisible } = this.state;
-    const urlCreator = window.URL || window.webkitURL;
 
     return (
       <div className={styles.profile}>
@@ -81,7 +80,7 @@ export default class UserProfile extends Component {
               <h1>{ title }</h1>
               <p>{ description }</p>
               {isOwner && <a href="/createPost" onClick={this.onClickCreatePost}>Create Post</a>}
-              {!isOwner && !isSubscriptionValid && <a href="/subscribe" onClick={this.onClickSubscribe}>Subscribe</a>}
+              {!isOwner && !isSubscriptionValid && <a href="subscribe" onClick={this.onClickSubscribe}>Subscribe</a>}
               {!isOwner && isSubscriptionValid && <span>Subscribed!</span>}
             </div>
             <ol className={styles.posts}>
