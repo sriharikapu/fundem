@@ -2,6 +2,17 @@ pragma solidity ^0.5.0;
 import "zos-lib/contracts/Initializable.sol";
 import "./User.sol";
 
+/**
+ * @title Fundem.sol
+ * @author Dan Mowchan and Joshua Hannan
+ *
+ * version 0.0.1
+ *
+ * Implements the high level logic of the fundem application
+ *
+ * 
+ */
+
 contract Fundem is Initializable {
     address private owner;
     address[] public users;
